@@ -4,12 +4,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.sample17l10retrofitcustomlist.databinding.FragmentFirstBinding
 import com.example.sample17l10retrofitcustomlist.databinding.ItemUserBinding
 import com.google.gson.Gson
 import retrofit2.Call
 import retrofit2.Callback
+import retrofit2.HttpException
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -57,11 +59,15 @@ class FirstFragment : Fragment() {
                         if (response.isSuccessful) {
                             val users = response.body() ?: return
                             adapter.submitList(users)
+                        } else {
+                            handleException(HttpException(response))
                         }
                     }
 
                     override fun onFailure(call: Call<List<User>>, t: Throwable) {
-                        TODO("Not yet implemented")
+                        if (!call.isCanceled) {
+                            handleException(t)
+                        }
                     }
                 })
             }
@@ -71,6 +77,11 @@ class FirstFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
 
+        currentRequest?.cancel()
         _binding = null
+    }
+
+    private fun handleException(e: Throwable) {
+        Toast.makeText(requireContext(), e.message ?: "Something went wrong", Toast.LENGTH_SHORT).show()
     }
 }
