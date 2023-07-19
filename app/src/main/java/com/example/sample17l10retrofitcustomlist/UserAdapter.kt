@@ -42,6 +42,7 @@ class UserViewHolder(
     fun bind(user: User) {
         with(binding) {
             imageAvatar.load(user.avatarUrl)
+            userName.text = user.login
         }
     }
 }
