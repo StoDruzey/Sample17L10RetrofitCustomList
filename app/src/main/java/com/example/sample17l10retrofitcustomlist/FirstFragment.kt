@@ -1,13 +1,20 @@
 package com.example.sample17l10retrofitcustomlist
 
+import android.graphics.BlendMode
+import android.graphics.Canvas
+import android.graphics.Paint
+import android.graphics.Rect
+import android.graphics.RectF
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.RecyclerView
 import com.example.sample17l10retrofitcustomlist.databinding.FragmentFirstBinding
 import com.example.sample17l10retrofitcustomlist.databinding.ItemUserBinding
+import com.google.android.material.divider.MaterialDividerItemDecoration
 import com.google.gson.Gson
 import retrofit2.Call
 import retrofit2.Callback
@@ -40,6 +47,19 @@ class FirstFragment : Fragment() {
         with(binding) {
 
             recyclerView.adapter = adapter
+            recyclerView.addItemDecoration(
+                object : RecyclerView.ItemDecoration() {
+                    override fun getItemOffsets(
+                        outRect: Rect,
+                        itemPosition: Int,
+                        parent: RecyclerView
+                    ) {
+                        outRect.bottom = 50
+                    }
+                }
+//                MaterialDividerItemDecoration(requireContext(),
+//                    MaterialDividerItemDecoration.VERTICAL)
+            )
         }
 
         val retrofit = Retrofit.Builder()
@@ -49,7 +69,7 @@ class FirstFragment : Fragment() {
 
         val githubInterface = retrofit.create<GithubInterface>()
         currentRequest = githubInterface
-            .getUsers(10, 30)
+            .getUsers(30, 70)
             .apply {
                 enqueue(object : Callback<List<User>> {
                     override fun onResponse(
